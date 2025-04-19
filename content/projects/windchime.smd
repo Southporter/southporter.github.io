@@ -1,0 +1,20 @@
+---
+.title = "Windchime",
+.author = "Shem Sedrick",
+.date = @date("2025-03-21"),
+.layout = "project.shtml",
+.draft = false,
+---
+
+Windchime is (going to be) a Linux desktop app that reminds me to take breaks. I often lose track of time while working
+and need an automated remider to pause, breath, and look away from the screen. There are already several open source
+break apps out there, but I have found them to be a bit obtrusive and bloated. Most of them are Electron apps. All of
+them decide that they need to block your screen to force you to take a break.
+
+My goal with this project is to make a lightweight, native application using the handmade ethos. This means starting from the basics to better
+understand how the Linux desktop works. The end result should have:
+- Notifications
+- Gentle sounds
+- Pause and skip options
+- A settings window to tweak certain features
+

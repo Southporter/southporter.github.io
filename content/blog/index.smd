@@ -1,0 +1,13 @@
+---
+.title = "Blog",
+.author = "Shem Sedrick",
+.date = @date("2025-03-21"),
+.draft = false,
+.layout = "toc.shtml",
+---
+
+Blog Posts
+
+Windchime Devlogs
+ - [Part 1]($link.page("blog/windchime-devlog-1"))
+

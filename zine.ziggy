@@ -1,0 +1,21 @@
+Site {
+  .title = "Polyglot Mussings",
+  .host_url = "https://southporter.github.io",
+  .content_dir_path = "content",
+  .layouts_dir_path = "layouts",
+  .assets_dir_path = "assets",
+        .static_assets = [
+            "fonts/FiraCode-Bold.woff",
+            "fonts/FiraCode-Bold.woff2",
+            "fonts/FiraCode-Light.woff",
+            "fonts/FiraCode-Light.woff2",
+            "fonts/FiraCode-Medium.woff",
+            "fonts/FiraCode-Medium.woff2",
+            "fonts/FiraCode-Regular.woff",
+            "fonts/FiraCode-Regular.woff2",
+            "fonts/FiraCode-SemiBold.woff",
+            "fonts/FiraCode-SemiBold.woff2",
+            "fonts/FiraCode-VF.woff",
+            "fonts/FiraCode-VF.woff2",
+        ],
+}

@@ -1,0 +1,22 @@
+---
+.title = "Sending a Notification on a Linux Desktop",
+.author = "Shem Sedrick",
+.date = @date("2025-03-21"),
+.layout = "post.shtml",
+.draft = false,
+---
+
+## Getting on the (D)Bus
+
+DBus is the defacto form of interprocess communication (IPC) for the Linux desktop. It is used by Gnome and KDE, the
+two biggest players in the Linux desktop market.
+
+Our first hurdle is to connect to one of the DBus busses. There are two kinds of connections: system and session. The system is more
+for the key systems that run the operating system. This is mainly for things that interact with hardware or kernel.
+The session bus handles software attached to your login session. These are usually programs that you launch your self or that your desktop needs to run.
+
+
+
+### Step one: Send a notification
+
+

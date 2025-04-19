@@ -1,0 +1,62 @@
+:root {
+  color-scheme: light dark;
+
+  --light-background: #e1e1de;
+  --light-text: #595b62;
+  --light-primary: #a398bf;
+  --light-secondary: #618bb6;
+  --light-warn: #b35560;
+
+  --dark-background: #1f1f28;
+  --dark-text: #dcd7ba;
+  --dark-primary: #938aa9;
+  --dark-secondary: #c4b28a;
+  --dark-warn: #c4746e;
+
+
+}
+
+body {
+    background-color: var(--light-background);
+    color: var(--light-text);
+
+  font-family: 'FiraCode', Verdana, sans-serif;
+}
+a {
+  color: var(--light-primary);
+}
+a:visited {
+  color: var(--light-secondary);
+}
+a:hover {
+  color: var(--light-secondary);
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+
+nav > .spacer {
+  min-width: 1em;
+}
+
+
+@media (prefers-color-theme: dark) {
+  body {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
+
+  }
+a {
+  color: var(--dark-primary);
+}
+a:visited {
+  color: var(--dark-secondary);
+}
+a:hover {
+  color: var(--dark-secondary);
+}
+
+}
