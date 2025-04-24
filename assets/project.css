@@ -1,0 +1,12 @@
+#mainContent {
+  display: flex;
+  flex-direction: row;
+}
+
+#details {
+  flex: 1;
+}
+
+#description {
+  flex: 4;
+}

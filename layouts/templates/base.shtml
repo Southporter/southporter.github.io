@@ -24,6 +24,8 @@
     <super>
   </head>
   <body>
+    <div id="siteHeader">
+    <h1 id="siteName"><a href="$site.link()" :text="$site.title"></a></h1>
     <nav id="menu" class="float-right">
       <a href="/">Home</a>
       <div class="spacer"></div>
@@ -33,6 +35,7 @@
       <div class="spacer"></div>
       <a href="$site.page('about').link()">About</a>
     </nav>
+    </div>
     <div id="content">
       <super>
     </div>

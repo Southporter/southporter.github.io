@@ -15,7 +15,7 @@ Our first hurdle is to connect to one of the DBus busses. There are two kinds of
 for the key systems that run the operating system. This is mainly for things that interact with hardware or kernel.
 The session bus handles software attached to your login session. These are usually programs that you launch your self or that your desktop needs to run.
 
-
+[Connecting to the Session Bus](<$code.asset("dbusMessage.zig").lines(6, 6).language("zig")>)
 
 ### Step one: Send a notification
 

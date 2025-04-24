@@ -118,6 +118,12 @@
     --lotusCyan: #d7e3d8;
 }
 
+pre {
+  background-color: var(--sumiInk3);
+  overflow-y: scroll;
+
+  padding: 8px;
+}
 code {
   background-color: var(--sumiInk3);
 }
@@ -136,6 +142,16 @@ code .variable {
 code .constant.variable {
   color: var(--fujiWhite);
 }
+code .constant.variable_builtin.type.variable_member.variable {
+  color: var(--surimiOrange);
+}
+
+code .punctuation_delimiter {
+  color: var(--springViolet2);
+}
+code .punctuation_bracket {
+  color: var(--springViolet2);
+}
 
 
 code .number {
@@ -145,7 +161,9 @@ code .number {
 code .constant {
   color: var(--surimiOrange);
 }
-code .constant
+code .constant_builtin {
+  color: var(--springBlue);
+}
 
 code .identifier {
   color: var(--carpYellow);
@@ -162,6 +180,9 @@ code .function_call {
   color: var(--crystalBlue);
 }
 code .function_call.variable {
+  color: var(--crystalBlue);
+}
+code .type.constant.variable_builtin.function_call.variable_member.variable {
   color: var(--crystalBlue);
 }
 

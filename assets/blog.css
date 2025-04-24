@@ -5,11 +5,9 @@
 #page {
   max-width: 42em;
   text-align: justify;
+  width: 95vw;
 }
 
-.gutter {
-  flex: 1;
-}
 
 h1 {
   text-decoration: underline;
@@ -19,4 +17,15 @@ ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+.gutter {
+  flex: 1;
+  display: initial;
+}
+
+@media(max-width: 720px) {
+  .gutter {
+    display: none;
+  }
 }

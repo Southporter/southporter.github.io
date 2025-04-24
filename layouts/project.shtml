@@ -1,6 +1,19 @@
 <extend template="base.shtml">
 <title id="title" :text="$site.title"></title>
-<head id="head"></head>
+<head id="head">
+  <link rel="stylesheet" type="text/css" href="$site.asset('project.css').link()">
+</head>
 
-<div id="content" :html="$page.content()">
+<div id="content">
+  <div id="mainContent">
+  <div id="details">
+    <h3 :text="$page.title"></h3>
+    <a>Repo</a>
+  </div>
+  <div id="description" :html="$page.contentSection('description')">
+  </div>
+  </div>
+  <div id="log">
+  </div>
 </div>
+

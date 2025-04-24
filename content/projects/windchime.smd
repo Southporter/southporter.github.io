@@ -6,6 +6,7 @@
 .draft = false,
 ---
 
+[]($section.id('description'))
 Windchime is (going to be) a Linux desktop app that reminds me to take breaks. I often lose track of time while working
 and need an automated remider to pause, breath, and look away from the screen. There are already several open source
 break apps out there, but I have found them to be a bit obtrusive and bloated. Most of them are Electron apps. All of

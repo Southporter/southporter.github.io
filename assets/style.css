@@ -2,34 +2,69 @@
   color-scheme: light dark;
 
   --light-background: #e1e1de;
-  --light-text: #595b62;
-  --light-primary: #a398bf;
-  --light-secondary: #618bb6;
-  --light-warn: #b35560;
+  --light-text: #16161D;
+  --light-primary: #4d699b;
+  --light-secondary: #957fb8;
+  --light-warn: #c84053;
+  --light-hover: #9fb5c9;
+
+  --light-name: #5d57a3;
 
   --dark-background: #1f1f28;
   --dark-text: #dcd7ba;
   --dark-primary: #938aa9;
   --dark-secondary: #c4b28a;
   --dark-warn: #c4746e;
+  --dark-hover: #c4746e;
 
-
+  --dark-name: #7E9cd8;
 }
 
-body {
-    background-color: var(--light-background);
-    color: var(--light-text);
+@media (prefers-color-theme: light) {
+  body {
+      background-color: var(--light-background);
+      color: var(--light-text);
 
-  font-family: 'FiraCode', Verdana, sans-serif;
+    font-family: 'FiraCode', Verdana, sans-serif;
+  }
+  a {
+    color: var(--light-primary);
+  }
+  a:visited {
+    color: var(--light-secondary);
+  }
+  a:hover {
+    color: var(--light-hover);
+  }
+  #siteName a {
+    text-decoration: none;
+    color: var(--light-name);
+  }
 }
-a {
-  color: var(--light-primary);
-}
-a:visited {
-  color: var(--light-secondary);
-}
-a:hover {
-  color: var(--light-secondary);
+
+
+
+@media (prefers-color-theme: dark) {
+  body {
+    background-color: var(--dark-background);
+    color: var(--dark-text);
+    font-family: 'FiraCode', Verdana, sans-serif;
+
+  }
+  a {
+    color: var(--dark-primary);
+  }
+  a:visited {
+    color: var(--dark-secondary);
+  }
+  a:hover {
+    color: var(--dark-secondary);
+  }
+
+  #siteName a {
+    text-decoration: none;
+    color: var(--dark-name);
+  }
 }
 
 nav {
@@ -42,21 +77,21 @@ nav > .spacer {
   min-width: 1em;
 }
 
-
-@media (prefers-color-theme: dark) {
-  body {
-  background-color: var(--dark-background);
-  color: var(--dark-text);
-
-  }
-a {
-  color: var(--dark-primary);
-}
-a:visited {
-  color: var(--dark-secondary);
-}
-a:hover {
-  color: var(--dark-secondary);
+#siteHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
 }
 
+#siteName {
+  max-width: 49vw;
+  min-width: fit-content;
+  text-wrap: nowrap;
+  text-decoration: none;
+}
+#siteName a {
+  text-decoration: none;
+  color: var(--light-name);
 }
