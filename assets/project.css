@@ -1,12 +1,33 @@
 #mainContent {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 #details {
   flex: 1;
+  margin: 4px;
 }
 
 #description {
   flex: 4;
+  margin: 4px;
+  min-width: 55vw;
+}
+
+#log {
+  display: flex;
+  flex-direction: row;
+}
+
+.gutter {
+  flex: 1;
+}
+#logContent {
+  max-width: 43em;
+}
+@media(max-width: 720px) {
+  .gutter {
+    display: none;
+  }
 }

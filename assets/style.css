@@ -95,3 +95,7 @@ nav > .spacer {
   text-decoration: none;
   color: var(--light-name);
 }
+
+body {
+  font-size: 1.1em;
+}

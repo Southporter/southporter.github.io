@@ -7,13 +7,27 @@
 <div id="content">
   <div id="mainContent">
   <div id="details">
-    <h3 :text="$page.title"></h3>
-    <a>Repo</a>
+    <h2 :text="$page.title"></h2>
+    <div :if="$page.custom.get?('repo')">
+      <a href="$if">Repo</a>
+    </div>
   </div>
   <div id="description" :html="$page.contentSection('description')">
   </div>
   </div>
+  <hr >
   <div id="log">
+  <div class="gutter"></div>
+  <div id="logContent">
+  <h3>Devlog</h3>
+    <ctx :loop="$page.contentSections()">
+      <ctx :if="$loop.it.id.eql('description').not()">
+        <h4 :text="$loop.it.id"></h4>
+        <div id="$loop.it.id" :html="$loop.it.html()"></div>
+      </ctx>
+    </ctx>
+  </div>
+  <div class="gutter"></div>
   </div>
 </div>
 

@@ -4,6 +4,9 @@
 .date = @date("2025-03-21"),
 .layout = "project.shtml",
 .draft = false,
+.custom = {
+  "repo": "https://github.com/Southporter/Windchime",
+},
 ---
 
 []($section.id('description'))
@@ -18,4 +21,11 @@ understand how the Linux desktop works. The end result should have:
 - Gentle sounds
 - Pause and skip options
 - A settings window to tweak certain features
+
+[](<$section.id('Apr 18, 2025')>)
+Windchime now respects [idle time](https://wayland.app/protocols/ext-idle-notify-v1) on Wayland. After 5 minutes of idle time, Windchime will now pause notifications and wait for the Wayland seat to send an [`resumed`](https://wayland.app/protocols/ext-idle-notify-v1#ext_idle_notification_v1:event:resumed) event.
+
+[](<$section.id('Mar 21, 2025')>)
+Windchime is working! It sends a notification every 20 minutes. This is hard coded right now, but that will change in the future.
+
 
