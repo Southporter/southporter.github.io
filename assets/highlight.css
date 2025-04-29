@@ -126,6 +126,10 @@ pre {
 }
 code {
   background-color: var(--sumiInk3);
+  color: var(--dragonBlue);
+}
+pre code {
+  color: var(--fujiWhite);
 }
 
 code .comment {
@@ -233,4 +237,5 @@ code .special2   {
 code .special3   {
   color: var(--peachRed);
 }
+
 

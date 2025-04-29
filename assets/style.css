@@ -99,3 +99,17 @@ nav > .spacer {
 body {
   font-size: 1.1em;
 }
+
+.block {
+  border: 2px solid #717c7c;
+  margin: 16px;
+}
+.block h1 {
+  font-size: 1.1em;
+  margin: 8px;
+  margin-bottom: 0;
+}
+.block p {
+  margin: 8px;
+  text-align: left;
+}

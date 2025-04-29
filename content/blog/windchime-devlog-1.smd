@@ -11,12 +11,81 @@
 DBus is the defacto form of interprocess communication (IPC) for the Linux desktop. It is used by Gnome and KDE, the
 two biggest players in the Linux desktop market.
 
-Our first hurdle is to connect to one of the DBus busses. There are two kinds of connections: system and session. The system is more
-for the key systems that run the operating system. This is mainly for things that interact with hardware or kernel.
-The session bus handles software attached to your login session. These are usually programs that you launch your self or that your desktop needs to run.
+There are a few libraries that you can use to interact with DBus. There are Python bindings and support for GLib and QT
+which covers the GTK and KDE respectively. You can also use the
+[raw C API](https://dbus.freedesktop.org/doc/api/html/topics.html). For the purposes of this post, we will be using the
+underlying C api with [Zig](https://ziglang.org).
+Zig makes it easy to import C apis and use them directly:
+[](<$code.asset('dbusMessage.zig').language('zig').lines(1,3)>)
+This will require you to have the dbus headers in the include path.
 
-[Connecting to the Session Bus](<$code.asset("dbusMessage.zig").lines(6, 6).language("zig")>)
+By the end this post, we will develop the code to the point where we will send a desktop notification.
+I am assuming that you have access to a desktop that runs a
+[Freedesktop Notification](https://specifications.freedesktop.org/notification-spec/latest/) compliant service.
+You will also need the Zig 0.14.0 compiler.
 
-### Step one: Send a notification
+Our first hurdle is to connect to one of the DBus busses. There are two kinds of connections: system and session.
+The system is more for the key systems that run the operating system. This is mainly for things that interact with
+hardware or kernel. The session bus handles software attached to your login session. These are usually programs that
+you launch your self or that your desktop needs to run. To send a notification, we need to connect with the Session bus.
+
+Add the following to you're main function:
+[](<$code.asset("dbusMessage.zig").lines(6, 7).language("zig")>)
+
+You'll notice that I added an unref call and not a `dbus_connection_close`. The dbus library handles closing the
+connection once all references have been released. You will get an runtime error if you try and close the connection,
+but make sure to clean up your reference by calling `unref` on the connection.
+
+## Creating a Message
+
+Now that we have a connection to the Session bus, we can create our message. It turns out that the message does not
+depend on the connection until you go to send it, so you could also create the message before connecting. This allows
+for some flexibility since building a message requires allocations that can fail, so depending on your use case, it
+might make more sense to build the message first.
+
+There are several different types of DBus messages: Method Calls, Method Returns, Signals and Errors. For sending a
+notification, we only need to deal with the first one (for now). For a method call you will need 3 things:
+ - The destination service name
+ - The DBus path for the service
+ - The interface method to call
+
+Thankfully the Notification Spec is well layed out and we know each of these.
+ - Service name: `org.freedesktop.Notifications`
+ - DBus path: `/org/freedesktop/Notifications`
+ - Interface Method: `org.freedesktop.Notifications.Notify`
+
+With this information we can now construct a method call:
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(9, 18)>)
+
+From there we can start populating the contents of the message.
+
+## Append or Iter
+
+Now that we have a message, there are 2 ways to go about adding content. We can append items directly using
+[`dbus_message_append_args`](https://dbus.freedesktop.org/doc/api/html/group__DBusMessage.html#ga591f3aab5dd2c87e56e05423c2a671d9)
+as long as the values are simple types like strings, ints, or arrays of simple types.
+
+In the case of Notification, we need to be able to add Hints, and in order to do that, we need to use an Iterator.
+Getting an iterator for the root is simple. Calling `dbus_message_iter_init_append` will do the trick. This method
+takes 2 parameters: the message and the parent iterator. Initially we will put null for the parent iterator since
+we are opening the first one.
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(20, 20)>)
+
+## Adding basic values
+
+The iterator api has 2 main ways to add basic values. Most are added with `dbus_message_iter_append_basic` method.
+This can be used for all basic values like strings and integers. One thing to be aware of here is that this method
+expects pointers to the values, not the values them selves. That's why you have to specify the type as the second
+parameter.
+
+This will make a bit more sense with an example. Below is how we would add the first 5 values for a notification:
+[](<$code.asset('dbusMessage.zig').language('zig').lines(22, 26)>)
+
+># [Note]($block.attrs('note'))
+> For this examble, I am ignoring the return value. For a more robust implementation, you will want to make
+> sure that the method returns `TRUE` which means that data was allocated correctly. Otherwise you are out of memory
+> and the message won't send.
 
 

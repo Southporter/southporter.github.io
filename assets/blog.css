@@ -13,7 +13,7 @@ h1 {
   text-decoration: underline;
 }
 
-ul {
+.gutter ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -29,3 +29,4 @@ ul {
     display: none;
   }
 }
+
