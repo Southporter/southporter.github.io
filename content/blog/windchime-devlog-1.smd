@@ -17,7 +17,9 @@ which covers the GTK and KDE respectively. You can also use the
 underlying C api with [Zig](https://ziglang.org).
 Zig makes it easy to import C apis and use them directly:
 [](<$code.asset('dbusMessage.zig').language('zig').lines(1,3)>)
-This will require you to have the dbus headers in the include path.
+># [Note]($block.attrs('note'))
+> This will require you to have the dbus headers in the include path.
+
 
 By the end this post, we will develop the code to the point where we will send a desktop notification.
 I am assuming that you have access to a desktop that runs a
@@ -67,11 +69,12 @@ Now that we have a message, there are 2 ways to go about adding content. We can 
 as long as the values are simple types like strings, ints, or arrays of simple types.
 
 In the case of Notification, we need to be able to add Hints, and in order to do that, we need to use an Iterator.
-Getting an iterator for the root is simple. Calling `dbus_message_iter_init_append` will do the trick. This method
-takes 2 parameters: the message and the parent iterator. Initially we will put null for the parent iterator since
-we are opening the first one.
+Getting an iterator for the root is simple. Calling `dbus_message_iter_init_append` will do the trick. You will need
+to allocate space for the iterator first, whether on the stack or heap. Since the iterator is short lived, it is fine
+to set space on the stack and pass the address to this method. For convinience and type checking purposes, I set up
+a single pointer to that stack space that will be referenced as we append data to the iterator.
 
-[](<$code.asset('dbusMessage.zig').language('zig').lines(20, 20)>)
+[](<$code.asset('dbusMessage.zig').language('zig').lines(20, 22)>)
 
 ## Adding basic values
 
@@ -81,7 +84,7 @@ expects pointers to the values, not the values them selves. That's why you have 
 parameter.
 
 This will make a bit more sense with an example. Below is how we would add the first 5 values for a notification:
-[](<$code.asset('dbusMessage.zig').language('zig').lines(22, 26)>)
+[](<$code.asset('dbusMessage.zig').language('zig').lines(24, 28)>)
 
 ># [Note]($block.attrs('note'))
 > For this examble, I am ignoring the return value. For a more robust implementation, you will want to make
