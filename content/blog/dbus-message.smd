@@ -6,7 +6,7 @@
 .draft = false,
 ---
 
-## Getting on the (D)Bus
+# Getting on the (D)Bus
 
 DBus is the defacto form of interprocess communication (IPC) for the Linux desktop. It is used by Gnome and KDE, the
 two biggest players in the Linux desktop market.
@@ -32,15 +32,15 @@ hardware or kernel. The session bus handles software attached to your login sess
 you launch your self or that your desktop needs to run. To send a notification, we need to connect with the Session bus.
 
 Add the following to you're main function:
-[](<$code.asset("dbusMessage.zig").lines(6, 7).language("zig")>)
+[](<$code.asset("dbusMessage.zig").lines(6, 11).language("zig")>)
 
 You'll notice that I added an unref call and not a `dbus_connection_close`. The dbus library handles closing the
 connection once all references have been released. You will get an runtime error if you try and close the connection,
 but make sure to clean up your reference by calling `unref` on the connection.
 
-## Creating a Message
+# Creating a Message
 
-Now that we have a connection to the Session bus, we can create our message. It turns out that the message does not
+Now thatwe have a connection to the Session bus, we can create our message. It turns out that the message does not
 depend on the connection until you go to send it, so you could also create the message before connecting. This allows
 for some flexibility since building a message requires allocations that can fail, so depending on your use case, it
 might make more sense to build the message first.
@@ -58,7 +58,7 @@ Thankfully the Notification Spec is well layed out and we know each of these.
 
 With this information we can now construct a method call:
 
-[](<$code.asset('dbusMessage.zig').language('zig').lines(9, 18)>)
+[](<$code.asset('dbusMessage.zig').language('zig').lines(13, 22)>)
 
 From there we can start populating the contents of the message.
 
@@ -74,7 +74,7 @@ to allocate space for the iterator first, whether on the stack or heap. Since th
 to set space on the stack and pass the address to this method. For convinience and type checking purposes, I set up
 a single pointer to that stack space that will be referenced as we append data to the iterator.
 
-[](<$code.asset('dbusMessage.zig').language('zig').lines(20, 22)>)
+[](<$code.asset('dbusMessage.zig').language('zig').lines(24, 26)>)
 
 ## Adding basic values
 
@@ -84,7 +84,7 @@ expects pointers to the values, not the values them selves. That's why you have 
 parameter.
 
 This will make a bit more sense with an example. Below is how we would add the first 5 values for a notification:
-[](<$code.asset('dbusMessage.zig').language('zig').lines(24, 28)>)
+[](<$code.asset('dbusMessage.zig').language('zig').lines(28, 36)>)
 
 ># [Note]($block.attrs('note'))
 > For this examble, I am ignoring the return value. For a more robust implementation, you will want to make
@@ -92,3 +92,83 @@ This will make a bit more sense with an example. Below is how we would add the f
 > and the message won't send.
 
 
+## Adding arrays
+
+Now we come to our first complex type: actions. Notification actions are an array of string pairs. The first of the
+pair is the action name, the second is the display name. You came have more than one pair, but there always need to be
+a multiple of 2 strings in the array.
+
+In order to write an array into the message, you have to open a "container". Containers can be other types as well, but
+for now we only need an array. We also have to specify the array type. In this case we are sending strings which have
+  the signature "s". Once we have the container open, we have to remember to close it. Zig makes this convinient with
+`defer`. Then we add each string like normal.
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(38, 51)>)
+
+># [Note]($block.attrs('note'))
+> In this example, we only handle the happy path, namely that the appending won't fail. In a more robust implementation,
+> you would likely want to abort the container if you had any failures.
+
+## Handling a Map
+
+Notification servers can implement extra features known as
+[hints](https://specifications.freedesktop.org/notification-spec/latest/hints.html).
+There are a number of well defined hints in the specification and each notification server _should_ document their
+specific hints. One that is widely supported is `urgency`. This allows you to determine the priority of the notification
+and allows the server to handle things like "Do Not Disturb" mode or things like that.
+
+The challenging part is that this is a Map. Or more specifically an array of containers that are a key/value pair.
+It's a little confusing at first, so lets put this into our example here.
+
+The first thing we need to do is open an array. This is very similar to what we had to do for actions, but this time we
+need a different signature: "{sv}". Simply put, this signature says that we will have a "Dict Entry" (the "{}" part of
+the signature), with a string key, and a variant value. The variant part means that it can be any DBus data type, but
+it has to be packaged in such a way as to signal what type it is. When adding the variant, you have to provide it's type.
+
+The `urgency` hint has a value that is a byte variant. This is indicated with the `"y"` string. It can be a 0 for low,
+1 for normal, and 2 for critical.
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(54, 80)>)
+
+
+## Finishing the message
+
+To finish the Notification message, we have one more field. We provide an expiration time for the notification. This is
+another basic value, so as we did for the first handful of values, we add an integer to the message.
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(82, 83)>)
+
+
+
+# Sending the message
+
+Now that we have all of that out of the way, we need to get that message submitted to the bus. There are a few
+options here, depending on your event loop and tolerance for blocking calls. DBus by nature is asyncronous, and
+most of the send methods are non-blocking. You submit the message and at a later time check back for a reply.
+
+In our case, we will do the simplest method of blocking until we get a reply. This is done with the
+[`dbus_connection_send_with_reply_and_block`](https://dbus.freedesktop.org/doc/api/html/group__DBusConnection.html#ga8d6431f17a9e53c9446d87c2ba8409f0)
+I know, rather verbose, but at least you know exactly what you are getting yourself into.
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(92, 93)>)
+
+## Handling a reply
+
+In the case of a notification, we are expecting a reply. This is a rather simple message, but it will help to
+illustrate how to get a value out of a message. Similar to writing a message, we can read basic values with
+the `dbus_message_get_args` and recieve basic values through pointers. If we need a more complex value, we would
+employ `DBusMessageIter` again but this time using the read methods.
+
+
+[](<$code.asset('dbusMessage.zig').language('zig').lines(93, 100)>)
+
+
+# The End
+
+With all those pieces in place, you should be able to compile and run your program. You should get a simple
+notification through your notification server.
+
+---
+
+## End Notes
+[Download Example]($link.asset('dbusMessage.zig'))

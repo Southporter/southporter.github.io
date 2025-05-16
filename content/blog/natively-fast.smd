@@ -1,0 +1,9 @@
+---
+.title = "It's not \"Blazingly Fast ™️\"",
+.author = "Shem Sedrick",
+.date = @date("2025-05-15"),
+.layout = "post.shtml",
+.draft = false,
+---
+
+

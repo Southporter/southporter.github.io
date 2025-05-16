@@ -6,8 +6,9 @@
 .layout = "toc.shtml",
 ---
 
-Blog Posts
+# Blog Posts
 
-Windchime Devlogs
- - [Part 1]($link.page("blog/windchime-devlog-1"))
+## DBus Series
+ - [Sending a Message]($link.page("blog/dbus-message"))
+
 
