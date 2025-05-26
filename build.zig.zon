@@ -1,0 +1,18 @@
+.{
+    .name = .southporter_github_io,
+    .version = "0.1.0",
+    .fingerprint = 0x13e808de03878bee,
+    .dependencies = .{
+        .zine = .{
+            .url = "git+https://github.com/kristoff-it/zine?ref=v0.10.1#c5facd96ce1a053c8c555cd95e6c42a8f125a35a",
+            .hash = "zine-0.9.0-ou6nIM81FgCNHXtoHPbozNhUnNz0jxkcPVDSDgqhE9pt",
+        },
+    },
+    .paths = .{
+        "content",
+        "assets",
+        "layouts",
+        "build.zig",
+        "build.zig.zon",
+    },
+}

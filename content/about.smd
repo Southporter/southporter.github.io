@@ -1,0 +1,12 @@
+---
+.title = "About",
+.author = "Shem Sedrick",
+.date = @date("2025-03-21"),
+.layout = "about.shtml",
+.draft = false,
+---
+
+Hi, I'm Shem Sedrick. I am a husband, father, and chronic tinkerer. I currently work as a Software Architect at [Caylent](https://www.caylent.com/).
+
+[Github](https://github.com/southporter)
+[LinkedIn](https://www.linkedin.com/in/shemsedrick/)

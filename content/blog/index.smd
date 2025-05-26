@@ -1,0 +1,14 @@
+---
+.title = "Blog",
+.author = "Shem Sedrick",
+.date = @date("2025-03-21"),
+.draft = false,
+.layout = "toc.shtml",
+---
+
+# Blog Posts
+
+## DBus Series
+ - [Sending a Message]($link.page("blog/dbus-message"))
+
+

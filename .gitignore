@@ -1,3 +1,2 @@
-node_modules/
-*.log
-dist/shared.index.js
+zig-out/
+.zig-cache/

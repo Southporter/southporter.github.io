@@ -1,0 +1,11 @@
+---
+.title =  "Southporter's Blog",
+.layout = "home.shtml",
+.date = @date("2025-03-21"),
+.author = "Shem Sedrick",
+.draft = false,
+---
+
+## Welcome
+
+I hope you enjoy your visit.

@@ -1,0 +1,32 @@
+#main {
+  display: flex; flex-direction: row;
+}
+
+#page {
+  max-width: 42em;
+  text-align: justify;
+  width: 95vw;
+}
+
+
+h1 {
+  text-decoration: underline;
+}
+
+.gutter ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gutter {
+  flex: 1;
+  display: initial;
+}
+
+@media(max-width: 720px) {
+  .gutter {
+    display: none;
+  }
+}
+

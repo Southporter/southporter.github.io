@@ -1,0 +1,30 @@
+<extend template="base.shtml">
+<title id="title" :text="$site.title"></title>
+<head id="head">
+  <link rel="stylesheet" type="text/css" href="$site.asset('blog.css').link()">
+  <link rel="stylesheet" type="text/css" href="$site.asset('highlight.css').link()">
+</head>
+<div id="content">
+  <div id="main">
+    <div class="gutter">
+      <div :html="$page.toc()" id="toc"></div>
+    </div>
+    <div>
+      <h1 :text="$page.title"></h1>
+
+      <div id="page" :html="$page.content()"></div>
+    </div>
+    <div class="gutter">
+    </div>
+  </div>
+<footer id="footer">
+    <p>article by <span :text="$page.author"></span></p>
+  <p>
+    Posted on:
+    <span
+      :text="$page.date.format('January 02, 2006')"
+    ></span>
+
+  </p>
+</footer>
+</div>
