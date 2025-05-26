@@ -3,7 +3,7 @@ const zine = @import("zine");
 
 pub fn build(b: *std.Build) !void {
     const dbus_example_mod = b.createModule(.{
-        .root_source_file = b.path("content/blog/windchime-devlog-1/dbusMessage.zig"),
+        .root_source_file = b.path("content/posts/dbus-message/dbusMessage.zig"),
         .target = b.resolveTargetQuery(.{}),
     });
     dbus_example_mod.linkSystemLibrary("dbus-1", .{});
