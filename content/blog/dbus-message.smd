@@ -172,3 +172,16 @@ notification through your notification server.
 
 ## End Notes
 [Download Example]($link.asset('dbusMessage.zig'))
+
+You can run the file with the following command. If your dbus headers
+are in a different location, you will need to update them to match
+your system install.
+
+```sh
+$ zig run -lc \
+      -I/usr/include/dbus-1.0 \
+      -I/usr/lib64/dbus-1.0/include \
+      -L/usr/lib64 \
+      -ldbus-1 \
+      dbusMessage.zig
+```

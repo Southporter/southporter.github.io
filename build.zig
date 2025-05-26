@@ -22,7 +22,6 @@ pub fn build(b: *std.Build) !void {
     const run_zine = zine.serve(b, .{});
     serve.dependOn(&run_zine.step);
 
-    b.installArtifact(dbus_example);
     const run_cmd = b.addRunArtifact(dbus_example);
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {

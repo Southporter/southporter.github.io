@@ -3,7 +3,11 @@
 .author = "Shem Sedrick",
 .date = @date("2025-05-15"),
 .layout = "post.shtml",
-.draft = false,
+.draft = true,
 ---
 
+We have all seen those utilities and frameworks. They claim they are "Blazingly Fast ™️", usually with nothing to
+back it up. Just a claim sitting in their readme.
 
+Often they aren't doing anything different from other adjacent tools or frameworks, except maybe using a different base language. There are
+a slew
