@@ -1,0 +1,18 @@
+---
+.title = "Balista",
+.author = "Shem Sedrick",
+.date = @date("2025-07-17"),
+.layout = "project.shtml",
+.draft = false,
+.custom = {
+  "repo": "https://github.com/Southporter/Balista",
+},
+---
+
+[]($section.id('description'))
+Balista is a minimalist Android Launcher inspired by [the Light Phone III](https://www.thelightphone.com/lightiii).
+It was [vibe coded]($link.page('posts/vibe-coded-app')) as an experiment. I currently use it as my default launcher.
+
+
+[](<$section.id('July 17, 2025'))
+The writeup is done. Initial app done.

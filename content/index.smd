@@ -1,11 +1,14 @@
 ---
 .title =  "Southporter's Blog",
-.layout = "home.shtml",
-.date = @date("2025-03-21"),
 .author = "Shem Sedrick",
+.date = @date("2025-03-21"),
 .draft = false,
+.layout = "toc.shtml",
 ---
 
-## Welcome
+# Blog Posts
 
-I hope you enjoy your visit.
+- [Vibecoding an Android App]($link.page("posts/vibe-coded-app"))
+
+## DBus Series
+ - [Sending a Message]($link.page("posts/dbus-message"))

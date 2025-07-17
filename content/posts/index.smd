@@ -8,6 +8,8 @@
 
 # Blog Posts
 
+- [Vibecoding an Android App]($link.page("posts/vibe-coded-app"))
+
 ## DBus Series
  - [Sending a Message]($link.page("posts/dbus-message"))
 

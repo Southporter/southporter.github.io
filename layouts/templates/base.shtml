@@ -27,8 +27,6 @@
     <div id="siteHeader">
     <h1 id="siteName"><a href="$site.link()" :text="$site.title"></a></h1>
     <nav id="menu" class="float-right">
-      <a href="/">Home</a>
-      <div class="spacer"></div>
       <a href="$site.page('posts').link()">Blog</a>
       <div class="spacer"></div>
       <a href="$site.page('projects').link()">Projects</a>

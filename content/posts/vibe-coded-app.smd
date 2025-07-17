@@ -1,0 +1,239 @@
+---
+.title = "Vibecoding an Android Launcher",
+.author = "Shem Sedrick",
+.date = @date("2025-07-17"),
+.layout = "post.shtml",
+.draft = false,
+---
+
+## Starting up
+
+I initially tried to create an Android launcher a month or so ago. I saw [the Light Phone III](https://www.thelightphone.com/lightiii)
+and loved the simple, minimal menu. Since I am a developer, I thought it would be pretty simple
+to make my own. I gave it a shot, but quickly felt out of my depth. The last time I made an Android app was back in college for a class (over 5 years ago).
+
+With all the AI advances, I thought I'd take a stab at vibe coding it. I wanted to document my process to provide others an opportunity to see what worked for me. I used [Claude Code](https://www.anthropic.com/claude-code),
+but you should be able to follow this with an CLI or IDE agent.
+
+I started with an already existing Android repo created by Android Studio. I think part of the success was having that scaffolding already in place.
+
+## Describing the App
+
+My first prompt described what I wanted to accomplish:
+
+```md
+I want to make a new Android launcher. I would like it to copy the LightOS main menu. The idea is to have a predefined set of applications
+that we can toggle on and off in the Ballista settings.
+We will need 2 intents. The main one will be the launcher screen. This should look like @idea-full-list.png When there are too many items, it
+should look like @idea-scroll-mode.png . This screen will need to adjust to the light/dark mode of the phone.
+The second intent will be a settings screen where you can toggle the menu items. This should also have an item to go to the main settings of
+the phone.
+```
+
+A few things to note here. I captured some images of what I wanted this to look like. Claude was able to use those as context for generating the code. This worked out really well. After this I had an app that
+looked like what I wanted. It wasn't perfect: the scroll indicators din't work at all, but we were off to a great start.
+
+I then had to connect my phone up with ADB. I tried getting Claude to help with that, but ended up doing it myself. Claude wanted me to use USB but it was much more convenient to do
+[wireless debugging](https://developer.android.com/tools/adb#connect-to-a-device-over-wi-fi).
+
+I also had a few issues with Java not being in the path, but that was a problem with my shell setup. An easy fix. Once I had that all set up, the rest was fairly easy. Running `./gradlew installDebug` with the my phone connected to adb got me up and running.
+
+
+## Starting the Tweaks
+
+Now came the tricky part: starting to fix and expand the app.
+
+I started with the next prompt:
+
+```md
+Okay, I need a few tweaks. The main page needs to have better margin on the top and fewer items per screen. For my screen 9 items would be
+optimal.
+```
+This worked fine, but the app was a little crowded at the top since my phone has a notch.
+
+```md
+ Can we fix that padding to be vertical instead of just top?
+```
+This was an asthetic choice. I didn't want to see half visible options on the bottom. This means it might look different on a larger or smaller
+screen, but I'm building this mostly for myself.
+
+I noticed that the scroll indicators (a column of dots) didn't work. It just stayed the same regardless of scrolling. I tried a number of
+prompts, but haven't currently gotten it to work.
+
+```md
+The dots don't update when I scroll. Can you fix that?
+```
+There were several prompts like this, but they didn't get me anywhere.
+
+
+## Crafting the Settings Page
+
+I wanted this to be more configurable than a bunch of canned apps. We needed to improve the settings page. And we needed to
+use the settings page.
+
+```md
+The settings menu item is leading me to the phone menu. I would like that to lead to the Ballista settings page.
+---
+I would like to be able to reorder them. Can we update the settings page to allow the items to be dragged around to a new order?
+---
+Can we remove the toggle from Settings on the settings page. Settings should always be visible.
+---
+Can we move settings to the bottom of the main page? I still want settings to show up on the settings page, because I want to be able to
+change it's possition, but I don't want it to be toggled at all. It should always be toggled on.
+---
+The order that I set in the settings isn't being reflected in the main screen
+```
+
+
+### Changing the order of things
+
+Drag and Drop is quite complicated. I've had to deal with it a number of times as a web developer, so I had some idea of the complexity
+of this part of the application. I think that helped me work through the next little bit.
+
+```md
+Would it be possible to drag and drop instead of using the arrows?
+---
+Can we change the icon to be 2 lines instead of 3? Also, the item isn't dragging at all.
+---
+I don't like the list icon. Put bag the DragIndicator.
+```
+
+At this point I felt like I was running in circles. Sending a "this isn't working" prompt was ineffective.
+However, when I put the agent in "Plan" mode, I was able to get out of the hump. Claude was able to
+search the web with some tool use in order to research libraries to use. Even with that, there were
+still some bugs to work out.
+
+```md
+Now, let's get drag and drop working.
+---
+The long press isn't working.
+---
+I think we have an off by one error. It thinks I'm dragging the one just above what I am selecting.
+```
+This last one was tricky. I don't know if a non-technical person would have been able to figure
+out the right way to prompt the LLM to get a good fix for the off by one error. Knowing the common
+issues with developing software helped me get a solution more directly in this case.
+
+## Launching Apps
+
+Since the goal is to create an Android launcher (the main screen that lets you start other applications),
+it is necessary for the app to correctly launch the selected application. However, all I was getting
+was an error saying that it failed to launch the app.
+
+```md
+I am getting "Failed to launch Phone" and "Failed to launch Calendar"
+---
+Now none of them launch properly. Alarm and Timer used to be working. Is there a way to discover the apps installed and use a core subset?
+---
+Now I only see the settings.
+```
+You see here that regressions happen. It was working, at least somewhat, but "fixes" caused other issuse.
+The last one was quite comical. If there the only app is a page in the current app, then they all launch correctly. 🤔
+
+To get out of this cycle, I had to go back to "Plan" mode again.
+
+```md
+Launching still doesn't work. Please take some time to figure out the correct way to do thhis.
+```
+
+That is a typo. It was in my original prompt. The great thing about these tools is that they can work around
+typos and other small inconsistencies.
+
+And with that, we now had the apps launching correctly!
+
+## Show and Tell
+
+```md
+Great, it is now launching the apps correctly. The next step is to have all of the apps on the device available on the settings page and keep
+them turned off by default.
+There are these exceptions, which should be on by default:
+* Phone
+* Messages
+* Alarm
+* Calendar
+* Camera
+```
+
+I wanted to be able to show only a subset of all my installed apps. This is one of the things that I didn't like about the default Trebuchet
+launcher that comes with Android by default.
+It's never as simple as you want it to be though. I had to guide the LLM to make sure it integrated well.
+
+```md
+Now we need to udate the main page to only show the ones that have been toggled on..
+```
+Again, a typo with the `..` but the LLM had no issues with it.
+
+
+## Fixing a crash
+
+I started to notice some odd behavior. When I went to the settings page and scrolled around, the app would crash. I wasn't really sure
+what the issue was this time, so I started generic:
+
+```md
+The app keeps crashing. Can we look at the logs and fix that?
+```
+
+This lead to the LLM trying to get logs from my device. This worked pretty well, but it also required me to have to crash the app
+enough for it to appear in the logs. This ended up with a little dance with me trying to crash the app
+while the LLM kept searching the logs. We ended up finding the issue, and getting a good fix.
+
+This is another point where understanding the development process made for a quicker solution. Knowing how the logging worked and
+watching the commands that Claude Code was running helped me assist in finding the bug. I knew that I had to keep making the app
+crash to increase the likelyhood of finding some good logs.
+
+Regardless, it was nice to see that I could start with something vague ("fix the crash") and that the tool was able to solve it.
+
+## Further tweaks
+
+The conversation continued with me requesting a few tweaks:
+
+```md
+I want to be able to change the display name for each of the menu items.
+---
+In stead of tapping it to edit, can we have an edit button for the name?
+---
+Can we hide the Android system app from the app list on the settings page?
+---
+On the settings page, can we add some padding to the bottom? The Phone Settings is a little squished at the bottom.
+---
+Now we need to a way to let the user set this as the default launcher.
+```
+
+And with that, it was looking pretty good. It had all the core functionality that I wanted. I could even run it
+as my default launcher. Not bad for a couple hours of prompting.
+
+
+## What I learned
+
+A few things I learned from this experience:
+
+### Context is everything
+
+One of the big successes was getting it to look like what I wanted right off the bat. I think the use of screenshots
+to show the layout was critical. I didn't have to do many tweaks to the layout. I was even able to get dark mode/light mode
+without much trouble.
+
+### Understand the Technologies
+
+While these tools are great, they don't substitute the understanding needed to build something good. I had previous
+android experience (albeit outdated) that let me use the right terms. I also knew `adb` and was able to get it
+connected to my phone. This cut down on the number of iterations because I was able to work with the tool, not
+rely solely on it.
+
+### Typos aren't an issue
+
+This came as a little surprise to me. Not sure why, but I thought typos and odd formatting might throw it off a bit.
+That wasn't the case. I think this is where LLMs shine. Taking unstructured and non-uniform input is a hard problem if
+you are trying to code all the edge cases in, but LLMs are able to roll with the odd input.
+
+### The importance of Planning
+
+"Plan" mode was a key part of the success. Knowing when to put your tool into "Plan" or "Ask" mode is the trick here.
+Often these tools are over-eager. They start working right away. Being able to stop and think is a big help in solving
+some of the more complicated issues you run into.
+
+This is true in real life too. I have a tendency to rush in and start bashing away at my keyboard. If I pause to think,
+I am usually able to see my way around the problem with a bit more clarity.
+
+With LLMs this is more about getting more context. Prompting is all about getting the right context into the LLM.
+Having the LLM create a plan allows you to get more relevant context into the LLM.

@@ -10,12 +10,12 @@
 
 
 h1 {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .gutter ul {
   list-style-type: none;
-  margin: 0;
+  margin: 8px;
   padding: 0;
 }
 
