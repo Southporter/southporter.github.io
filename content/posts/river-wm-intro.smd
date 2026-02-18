@@ -1,0 +1,101 @@
+---
+.title = "Intro to River Window Managers",
+.author = "Shem Sedrick",
+.date = @date("2026-02-14"),
+.layout = "post.shtml",
+.draft = false,
+---
+
+# River Compositor
+
+I've been using the [River][river] compositor for a while. I really like [River classic][river-classic]. It worked well, was stable for my use case, and I liked the tag system.  It took a little configuring to get up and running, but I liked how you can write your init script in any executable format and `river` would handle it just fine.
+
+There is a big change from 0.3.13 to 0.4 though. [Isaac Freund](https://isaacfreund.com), the primary author behind [River][river], made the decision to remove all window management from `river` and provide only the compositing aspects. Users will now have to pick [a window manager][river-wms] and run that alongside the compositor. Usually this is the init program passed to `river`.
+
+
+## What's in a Window Manager
+
+Isaac Freund explained the reason for change at a [Fosdem talk](https://fosdem.org/2026/schedule/event/GR8BFE-separating_the_wayland_compositor_and_window_manager/) earlier this year. I recommend watching that talk for a full explanation.
+
+The main concept here is that `river` will be in charge of buffers and client communication and compositing the buffers. This allows for "frame perfect" rendering and keeping things fast. It will talk asynchronously with the Window Manager to coordinate which applications are visible and where to place them.
+
+The Window Manager's job is to dictate:
+- Where an application is drawn on the screen
+- What order to draw the applications (which ones are on top of the others)
+- Drawing decorations if needed
+
+In addition, the window manager can handle bars, gaps, backgrounds, even keybindings. It has to be coordinated with the compositor, but the behavior is all up to the window management program.
+
+If you are interested in creating your own window manager (or simply understanding how it works), the following may be helpful.
+
+## Acquire your globals
+
+As with any [Wayland][wayland] application, the first thing to do is connect to the Display and go through the Registry to acquire the client side resources you need. You will need (at a minimum) the following globals:
+
+- [Compositor](https://wayland.app/protocols/wayland#wl_compositor)
+- [Shared Memory Support](https://wayland.app/protocols/wayland#wl_shm)
+- [River Window Manager](https://wayland.app/protocols/river-window-management-v1#river_window_manager_v1)
+
+Once you have the River Window Manager handle, you will need to listen for events on that client object. These are well documented in the protocol. They can also be found on [Wayland Explorer](https://wayland.app/protocols/river-window-management-v1#river_window_manager_v1:event:unavailable)
+
+The key events to look for are:
+- manage_start
+- render_start
+- seat
+- output
+- window
+
+Seat and output events inform your window manager which outputs (i.e. monitors, screens) and seats (i.e. keyboards, mice) are available. These will also tell you when they go away. This is important for your window manager to correctly handle monitors being plugged in or unplugged. 
+
+There are other events that you may be interested in, but they are out of scope for this guide. See the protocol specification for a full list of available events.
+
+You will want to make sure you capture the outputs, windows, and seats in some variables for later use. There are key events on these objects for which you will need to listen. The exact process will vary depending on your language and the wayland library you are using. Regardless, without these objects and listeners, you will not be able to handle the two stages of window management.
+
+
+## The Manage Stage
+
+Now that you have all the objects you need, here is where it gets interesting. The manage stage allows the window manager author to determine which windows are visible, how big they are, etc. It is hard to explain exactly what to do in this stage because it is unique to each window manager. However, here are some guidelines.
+
+Loop through each window. You will call the `hide` method on windows that are no longer visible. When you come to a window you want to display, you will want to `show` it and `proposeDimensions`. You could also `setBorders`, tell the window that it is minimized or maximized, or tell it to use client-side decorations. It's really up to you.
+
+Another thing you will need to do in this stage is to tell `river` which windows will receive events from a given seat. This allows you to control which window has "focus". `river` will pass events directly to that window until the next manage_start event.
+
+
+After everything is configured how you want it, you will need to invoke the `manage_finish` method. This tells the compositor that you are ready to move to the next stage.
+
+## The Render Stage
+
+After all the windows have been managed, it is now time to inform `river` how/where to render them. In this stage, you will be creating the render graph with [Nodes][rwm-nodes]. You can get these nodes from various sources. You must get a [node][rwm-nodes] object for each item that you will be rendering.
+
+For example, say you wanted to render a background image/buffer for each output. You would need to do the following:
+
+1. Get a [buffer][wl-buffer] from shared memory. Make sure to fill the buffer with what you want to display.
+1. Get a [surface][wl-surface] on which to show the buffer.
+1. Get a [river shell surface][rwm-shell-surface] with that buffer's surface. Don't forget to sync the buffer commit!
+1. Get a [node][rwm-nodes] for that shell surface.
+1. During the Render Stage, use the node to set the position and place it below all other surfaces.
+
+A similar process is used for displaying windows. You can get a node for the window and tell it what position to be at and where it is with respect to other nodes. For a stacked window manager, this allows you to place windows above or below others. The active window can always be [placed on top](https://wayland.app/protocols/river-window-management-v1#river_node_v1:request:place_top) to make sure it is the most visible.
+
+For example, say you have a simple window manager that places one window only. This example assumes one output. You would do the following:
+1. Make sure you have a node for that window.
+1. Place the node in position 0, 0. (Or at some other coordinate if you have bars or something).
+1. Make sure it is at the top by invoking `place_top` on the node.
+
+After you have the full render graph passed to the `river` compositor, you can invoke `render_finish`.
+
+## Conclusion
+That is it. Those two phases are all that you need to have a working River Window Manager. Now, this is an admittedly over-simplified outlook. There are many complex behaviors that can be put in the Manage and Render stages. We already have a number of different window managers to choose from, each with varying complexity in window management. 
+
+Hopefully this is enough to get you started. Have fun making the window manager of your dreams!
+
+
+
+[river]: https://isaacfreund.com/software/river/
+[river-classic]: https://codeberg.org/river/river-classic
+[river-wms]: https://codeberg.org/river/wiki/src/branch/main/pages/wm-list.md
+[wayland]: https://wayland.freedesktop.org/
+[wl-buffer]: https://wayland.app/protocols/wayland#wl_buffer
+[wl-surface]: https://wayland.app/protocols/wayland#wl_surface
+[rwm-shell-surface]: https://wayland.app/protocols/river-window-management-v1#river_shell_surface_v1
+[rwm-nodes]: https://wayland.app/protocols/river-window-management-v1#river_node_v1

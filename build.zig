@@ -5,12 +5,12 @@ pub fn build(b: *std.Build) !void {
     const dbus_example_mod = b.createModule(.{
         .root_source_file = b.path("content/posts/dbus-message/dbusMessage.zig"),
         .target = b.resolveTargetQuery(.{}),
+        .optimize = .ReleaseSafe,
     });
     dbus_example_mod.linkSystemLibrary("dbus-1", .{});
     const dbus_example = b.addExecutable(.{
         .name = "dbus_message",
         .root_module = dbus_example_mod,
-        .optimize = .ReleaseSafe,
     });
     dbus_example.linkLibC();
 
